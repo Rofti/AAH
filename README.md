@@ -17,3 +17,9 @@ This project is meant to be a WebApp helping players to better organize and mana
   1. User should have an overview over all characters in a party including skills, stats and inventory.
   2. User should be able to update and delete their own characters
 4. The WebApp should calculate all necessary stats & skills, managae countdowns such as thirst/hunger/sanity
+
+##SETUP
+
+create MySql user
++. name: UserAAH
++. pw: 1234aah

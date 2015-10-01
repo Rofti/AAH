@@ -80,7 +80,7 @@ public class Skillcalculation {
 		double calc = 0.2 * intelligence + 0.4 * morallyBlunted + 0.3 * strength + 0.3 * weaponry + 0.2 * medicineSkill;
 		return (int) calc;
 	}
-	
+	/*
 	public int calculateRobustness(){
 		
 	}
@@ -99,5 +99,5 @@ public class Skillcalculation {
 	
 	public int calculateValor(){
 		
-	}
+	}*/
 }
