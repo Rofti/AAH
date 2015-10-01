@@ -1,6 +1,7 @@
 CREATE TABLE CharacterProfile (
 CharacterProfileID int NOT NULL PRIMARY KEY UNIQUE,
-PlayerName varchar(256) NOT NULL FOREIGN KEY,
+PlayerName varchar(256) NOT NULL,
+	FOREIGN KEY (PlayerName) REFERENCES Player(Nickname) ON DELETE CASCADE,
 Name varchar(256) NOT NULL,
 Age int NOT NULL,
 Gender varchar(256) NOT NULL,
@@ -11,12 +12,18 @@ Appearance varchar(256)
 
 CREATE TABLE CharacterStats (
 CharacterID int NOT NULL PRIMARY KEY UNIQUE,
-BodyStatsID int NOT NULL FOREIGN KEY UNIQUE,
-SocialStatsID int NOT NULL FOREIGN KEY UNIQUE,
-IntellectualStatsID int NOT NULL FOREIGN KEY UNIQUE,
-SkillsID int NOT NULL FOREIGN KEY UNIQUE,
-WeaponSkillsID int NOT NULL FOREIGN KEY UNIQUE,
-InventoryID int NOT NULL FOREIGN KEY UNIQUE,
+BodyStatsID int NOT NULL UNIQUE, 
+	FOREIGN KEY (BodyStatsID) REFERENCES BodyStats(BodyStatsID) ON DELETE CASCADE,
+SocialStatsID int NOT NULL UNIQUE,
+	FOREIGN KEY (SocialStatsID) REFERENCES SocialStats(SocialStatsID),
+IntellectualStatsID int NOT NULL UNIQUE,
+	FOREIGN KEY (IntellectualStatsID) REFERENCES IntellectualStats(IntellectualStatsID) ON DELETE CASCADE,
+SkillsID int NOT NULL UNIQUE,
+	FOREIGN KEY (SkillsID) REFERENCES Skills(SkillsID) ON DELETE CASCADE,
+WeaponSkillsID int NOT NULL UNIQUE,
+	FOREIGN KEY (WeaponSkillsID) REFERENCES WeaponSkills(WeaponSkillsID) ON DELETE CASCADE,
+InventoryID int NOT NULL UNIQUE,
+	FOREIGN KEY (InventoryID) REFERENCES Inventory(InventoryID) ON DELETE CASCADE,
 CurrentHealth int NOT NULL,
 CurrentThirst int NOT NULL,
 CurrentHunger int NOT NULL,
@@ -79,12 +86,13 @@ Other int NOT NULL
 );
 
 CREATE TABLE Party (
-DungeonMasterName varchar(256) NOT NULL FOREIGN KEY,
+DungeonMasterName varchar(256) NOT NULL,
+	FOREIGN KEY (DungeonMasterName) REFERENCES Player(Name) ON DELETE CASCADE,
 PartyID int NOT NULL PRIMARY KEY UNIQUE,
 NumberPlayer int NOT NULL,
 ThirstModifier int NOT NULL,
 HungerModifier int NOT NULL,
-Sanity Modifier int NOT NULL,
+SanityModifier int NOT NULL,
 CharacterSlot varchar(256)
 );
 
@@ -92,7 +100,8 @@ CREATE TABLE Player (
 Name varchar(256),
 Nickname varchar(256) NOT NULL PRIMARY KEY,
 Password varchar(256) NOT NULL,
-PartySlot int FOREIGN KEY
+PartySlot int,
+	FOREIGN KEY (PartySlot) REFERENCES Party(PartyID) ON DELETE CASCADE
 );
 
 CREATE TABLE Inventory (
