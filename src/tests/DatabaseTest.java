@@ -8,13 +8,13 @@ import org.json.JSONArray;
 import org.junit.Before;
 import org.junit.Test;
 
+import utils.Party;
 import utils.Player;
 import database.DatabaseHandler;
 
 public class DatabaseTest {
 
 	DatabaseHandler dbHandler;
-	Player testPlayer;
 
 	@Before
 	public void before() {
@@ -80,4 +80,26 @@ public class DatabaseTest {
 
 	}
 
+	@Test
+	public void crudPartyTest() {
+		Party testParty=new Party("testNick",20,15,10,new JSONArray("[1,2,3]"));
+		Party updateTestParty = new Party("testNick",20,15,10,new JSONArray("[1,2,5]"));
+		
+		//test createParty, readParty
+		int testID= dbHandler.createParty(testParty);
+		Party readParty=dbHandler.readParty(testID);
+		assertEquals(readParty, testParty);
+		
+		// test updatePlayer
+		dbHandler.updateParty(testID,updateTestParty);
+		readParty=dbHandler.readParty(testID);
+		assertNotEquals(readParty, testParty);
+		assertEquals(readParty, updateTestParty);
+		
+		//test deleteParty  and clean test data from database
+		dbHandler.deleteParty(testID);
+		readParty=dbHandler.readParty(testID);
+		assertNull(readParty);
+	}
+	
 }

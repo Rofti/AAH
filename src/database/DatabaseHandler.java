@@ -11,6 +11,7 @@ import java.util.List;
 import org.json.JSONArray;
 import org.json.JSONException;
 
+import utils.Party;
 import utils.Player;
 
 public class DatabaseHandler {
@@ -109,6 +110,8 @@ public class DatabaseHandler {
 		}
 	}
 
+	// <<<<<<<<<<<<<<<<<CRUD PLAYER>>>>>>>>>>>>>>>>>>>>>>>>
+
 	public void createPlayer(Player player, String password) {
 		Connection connect = null;
 		Statement stmt = null;
@@ -194,21 +197,11 @@ public class DatabaseHandler {
 			stmt = connect.createStatement();
 
 			String sqlQuery;
-			sqlQuery = "SELECT Name, Nickname, PartySlots, Password FROM Player WHERE Nickname=\""
+			sqlQuery = "SELECT Password FROM Player WHERE Nickname=\""
 					+ nickname + "\"";
 
 			resSet = stmt.executeQuery(sqlQuery);
 			if (resSet.next()) {
-				JSONArray partySlots = new JSONArray();
-				try {
-					partySlots = new JSONArray(resSet.getString("PartySlots"));
-				} catch (JSONException e) {
-					e.printStackTrace(System.err);
-					System.err.println("Message: " + e.getMessage());
-					System.err.println("Error when reading player "
-							+ resSet.getString("Nickname")
-							+ ". PartySlots could not be parsed.");
-				}
 				password = resSet.getString("Password");
 			}
 		} catch (SQLException e) {
@@ -254,8 +247,8 @@ public class DatabaseHandler {
 				}
 				player = new Player(resSet.getString("Name"),
 						resSet.getString("Nickname"), partySlots);
-				for(int i = 0; i< partySlots.length(); ++i){
-					if(partySlots.getInt(i)==partyID){
+				for (int i = 0; i < partySlots.length(); ++i) {
+					if (partySlots.getInt(i) == partyID) {
 						playerList.add(player);
 					}
 				}
@@ -345,7 +338,7 @@ public class DatabaseHandler {
 
 			stmt.executeUpdate(sqlQuery);
 
-			//TODO: DELETE ALL CHARACTER OF THIS PLAYER (database consistency)
+			// TODO: DELETE ALL CHARACTER OF THIS PLAYER (database consistency)
 		} catch (SQLException e) {
 			e.printStackTrace(System.err);
 
@@ -361,4 +354,149 @@ public class DatabaseHandler {
 
 	}
 
+	// <<<<<<<<<<<<<<<<<CRUD PLAYER>>>>>>>>>>>>>>>>>>>>>>>>
+
+	public int createParty(Party party) {
+		Connection connect = null;
+		Statement stmt = null;
+		ResultSet resSet = null;
+		int generatedID = -1;
+		try {
+			connect = openDataBase();
+			stmt = connect.createStatement();
+
+			String sqlQuery;
+			sqlQuery = "INSERT INTO Party(DungeonMasterName , ThirstModifier,"
+					+ " HungerModifier, SanityModifier, CharacterSlots)"
+					+ "VALUES ( '" + party.getNicknameDM() + "' , '"
+					+ party.getThirstMod() + "' , '" + party.getHungerMod()
+					+ "' , '" + party.getSanityMod() + "' , '"
+					+ party.getCharactersJSON().toString() + "' );";
+
+			stmt.executeUpdate(sqlQuery,Statement.RETURN_GENERATED_KEYS);
+			resSet = stmt.getGeneratedKeys();
+
+			if (resSet.next()) {
+				generatedID = resSet.getInt(1);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace(System.err);
+
+			System.err.println("SQLState: " + ((SQLException) e).getSQLState());
+
+			System.err.println("Error Code: "
+					+ ((SQLException) e).getErrorCode());
+
+			System.err.println("Message: " + e.getMessage());
+		} finally {
+			closeDatabase(connect, stmt, resSet);
+		}
+		return generatedID;
+	}
+
+	public Party readParty(int partyID) {
+
+		Connection connect = null;
+		Statement stmt = null;
+		ResultSet resSet = null;
+		Party party = null;
+		try {
+			connect = openDataBase();
+			stmt = connect.createStatement();
+
+			String sqlQuery;
+			sqlQuery = "SELECT DungeonMasterName , ThirstModifier, HungerModifier, SanityModifier, CharacterSlots FROM Party WHERE PartyID="
+					+ partyID;
+
+			resSet = stmt.executeQuery(sqlQuery);
+			if (resSet.next()) {
+				JSONArray characterSlots = new JSONArray();
+				try {
+					characterSlots = new JSONArray(
+							resSet.getString("CharacterSlots"));
+				} catch (JSONException e) {
+					e.printStackTrace(System.err);
+					System.err.println("Message: " + e.getMessage());
+					System.err.println("Error when reading player "
+							+ resSet.getString("Nickname")
+							+ ". PartySlots could not be parsed.");
+				}
+				party = new Party(resSet.getString("DungeonMasterName"),
+						resSet.getInt("ThirstModifier"),
+						resSet.getInt("HungerModifier"),
+						resSet.getInt("SanityModifier"), characterSlots);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace(System.err);
+
+			System.err.println("SQLState: " + ((SQLException) e).getSQLState());
+
+			System.err.println("Error Code: "
+					+ ((SQLException) e).getErrorCode());
+
+			System.err.println("Message: " + e.getMessage());
+		} finally {
+			closeDatabase(connect, stmt, resSet);
+		}
+		return party;
+	}
+
+	public void updateParty(int partyID, Party party){
+		Connection connect = null;
+		Statement stmt = null;
+		ResultSet resSet = null;
+		try {
+			connect = openDataBase();
+			stmt = connect.createStatement();
+
+			String sqlQuery;
+			sqlQuery = "UPDATE Party " + "SET DungeonMasterName='" + party.getNicknameDM()
+					+ "' ," + "ThirstModifier=" + party.getThirstMod()
+					+ "," + "HungerModifier=" + party.getHungerMod()
+					+ "," + "SanityModifier=" + party.getSanityMod()
+					+ "," + "CharacterSlots='" + party.getCharactersJSON()+ "'"
+					+ " WHERE PartyID="+partyID +";";
+
+			stmt.executeUpdate(sqlQuery);
+
+		} catch (SQLException e) {
+			e.printStackTrace(System.err);
+
+			System.err.println("SQLState: " + ((SQLException) e).getSQLState());
+
+			System.err.println("Error Code: "
+					+ ((SQLException) e).getErrorCode());
+
+			System.err.println("Message: " + e.getMessage());
+		} finally {
+			closeDatabase(connect, stmt, resSet);
+		}
+	}
+
+	public void deleteParty(int partyID){
+		Connection connect = null;
+		Statement stmt = null;
+		ResultSet resSet = null;
+		try {
+			connect = openDataBase();
+			stmt = connect.createStatement();
+
+			String sqlQuery;
+			sqlQuery = "DELETE FROM Party WHERE PartyID=" + partyID;
+
+			stmt.executeUpdate(sqlQuery);
+
+		} catch (SQLException e) {
+			e.printStackTrace(System.err);
+
+			System.err.println("SQLState: " + ((SQLException) e).getSQLState());
+
+			System.err.println("Error Code: "
+					+ ((SQLException) e).getErrorCode());
+
+			System.err.println("Message: " + e.getMessage());
+		} finally {
+			closeDatabase(connect, stmt, resSet);
+		}
+	}
 }

@@ -66,12 +66,11 @@ Other int NOT NULL
 
 CREATE TABLE Party (
 DungeonMasterName varchar(255) NOT NULL,
-PartyID int NOT NULL PRIMARY KEY UNIQUE,
-NumberPlayer int NOT NULL,
+PartyID int NOT NULL PRIMARY KEY UNIQUE AUTO_INCREMENT,
 ThirstModifier int NOT NULL,
 HungerModifier int NOT NULL,
 SanityModifier int NOT NULL,
-CharacterSlot varchar(255)
+CharacterSlots varchar(255)
 );
 
 CREATE TABLE Player (
