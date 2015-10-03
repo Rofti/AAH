@@ -78,14 +78,12 @@ CREATE TABLE Player (
 Name varchar(255),
 Nickname varchar(255) NOT NULL PRIMARY KEY,
 Password varchar(255) NOT NULL,
-PartySlot int,
-	FOREIGN KEY (PartySlot) REFERENCES Party(PartyID) ON DELETE CASCADE
+PartySlots varchar(255) NOT NULL
 );
 
 CREATE TABLE CharacterProfile (
 CharacterProfileID int NOT NULL PRIMARY KEY UNIQUE,
 PlayerName varchar(255) NOT NULL,
-	FOREIGN KEY (PlayerName) REFERENCES Player(Nickname) ON DELETE CASCADE,
 Name varchar(255) NOT NULL,
 Age int NOT NULL,
 Gender varchar(255) NOT NULL,
@@ -97,17 +95,11 @@ Appearance varchar(255)
 CREATE TABLE CharacterStats (
 CharacterID int NOT NULL PRIMARY KEY UNIQUE,
 BodyStatsID int NOT NULL UNIQUE, 
-	FOREIGN KEY (BodyStatsID) REFERENCES BodyStats(BodyStatsID) ON DELETE CASCADE,
 SocialStatsID int NOT NULL UNIQUE,
-	FOREIGN KEY (SocialStatsID) REFERENCES SocialStats(SocialStatsID),
 IntellectualStatsID int NOT NULL UNIQUE,
-	FOREIGN KEY (IntellectualStatsID) REFERENCES IntellectualStats(IntellectualStatsID) ON DELETE CASCADE,
 SkillsID int NOT NULL UNIQUE,
-	FOREIGN KEY (SkillsID) REFERENCES Skills(SkillsID) ON DELETE CASCADE,
 WeaponSkillsID int NOT NULL UNIQUE,
-	FOREIGN KEY (WeaponSkillsID) REFERENCES WeaponSkills(WeaponSkillsID) ON DELETE CASCADE,
 InventoryID int NOT NULL UNIQUE,
-	FOREIGN KEY (InventoryID) REFERENCES Inventory(InventoryID) ON DELETE CASCADE,
 CurrentHealth int NOT NULL,
 CurrentThirst int NOT NULL,
 CurrentHunger int NOT NULL,
