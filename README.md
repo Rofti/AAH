@@ -21,5 +21,5 @@ This project is meant to be a WebApp helping players to better organize and mana
 ##SETUP
 
 create MySql user
-+. name: UserAAH
-+. pw: 1234aah
+  + name: UserAAH
+  + pw: 1234aah
